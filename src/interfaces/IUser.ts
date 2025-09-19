@@ -1,0 +1,1 @@
+export type IUser = { id: number, name: string, email: string };// Define the IUser type
