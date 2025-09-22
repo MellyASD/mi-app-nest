@@ -1,4 +1,8 @@
-import {Injectable,NotFoundException,OnModuleInit,} from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { IProduct, ICombo } from './menu.model';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreateComboDto } from './dto/create-combo.dto';
@@ -8,50 +12,47 @@ export class PanaderiaService implements OnModuleInit {
   private products: IProduct[] = [];
   private combos: ICombo[] = [];
 
-  // 🔄 Precarga inicial de productos y combos
-onModuleInit() {
-  // Fase 1: crear productos
-  const ids = [
-    this.createProduct({ name: 'Jugo de naranja', price: 3000 }).id,
-    this.createProduct({ name: 'Huevos al gusto', price: 4000 }).id,
-    this.createProduct({ name: 'Arepa', price: 2000 }).id,
-    this.createProduct({ name: 'Café', price: 2500 }).id,
-    this.createProduct({ name: 'Chocolate', price: 2500 }).id,
-    this.createProduct({ name: 'Pan', price: 1500 }).id,
-    this.createProduct({ name: 'Caldo', price: 3500 }).id,
-    this.createProduct({ name: 'Tamal', price: 6000 }).id,
-  ];
+  // 🔄 Precarga inicial
+  onModuleInit() {
+    this.createProduct({ name: 'Jugo de naranja', price: 3000 });
+    this.createProduct({ name: 'Huevos al gusto', price: 4000 });
+    this.createProduct({ name: 'Arepa', price: 2000 });
+    this.createProduct({ name: 'Café', price: 2500 });
+    this.createProduct({ name: 'Chocolate', price: 2500 });
+    this.createProduct({ name: 'Pan', price: 1500 });
+    this.createProduct({ name: 'Caldo', price: 3500 });
+    this.createProduct({ name: 'Tamal', price: 6000 });
 
-  // Fase 2: crear combos usando los IDs reales
-  this.createCombo({ name: 'Desayuno 1', items: [ids[0], ids[1], ids[2]] });
-  this.createCombo({ name: 'Desayuno 2', items: [ids[3], ids[1], ids[5]] });
-  this.createCombo({ name: 'Desayuno 3', items: [ids[0], ids[4], ids[3], ids[6]] });
-  this.createCombo({ name: 'Desayuno 4', items: [ids[7], ids[4], ids[5]] });
-}
+    this.createCombo({ name: 'Desayuno 1', items: ['Jugo de naranja', 'Huevos al gusto', 'Arepa'] });
+    this.createCombo({ name: 'Desayuno 2', items: ['Café', 'Huevos al gusto', 'Pan'] });
+    this.createCombo({ name: 'Desayuno 3', items: ['Jugo de naranja', 'Chocolate', 'Café', 'Caldo'] });
+    this.createCombo({ name: 'Desayuno 4', items: ['Tamal', 'Chocolate', 'Pan'] });
+  }
 
-  // 🥐 Productos
+  // 🥐 Productos por nombre
   createProduct(dto: CreateProductDto): IProduct {
     const id = this.products.length + 1;
-    const product: IProduct = { id, ...dto };
+    const { name, price } = dto;
+    const product: IProduct = { id, name, price };
     this.products.push(product);
     return product;
   }
 
-  updateProduct(id: number, dto: Partial<CreateProductDto>): IProduct {
-    const product = this.findProduct(id);
+  updateProductByName(name: string, dto: Partial<CreateProductDto>): IProduct {
+    const product = this.findProductByName(name);
     Object.assign(product, dto);
     return product;
   }
 
-  removeProduct(id: number): { deleted: boolean } {
-    const product = this.findProduct(id);
+  removeProductByName(name: string): { deleted: boolean } {
+    const product = this.findProductByName(name);
     this.products.splice(this.products.indexOf(product), 1);
     return { deleted: true };
   }
 
-  findProduct(id: number): IProduct {
-    const product = this.products.find(p => p.id === id);
-    if (!product) throw new NotFoundException(`Producto con id ${id} no encontrado`);
+  findProductByName(name: string): IProduct {
+    const product = this.products.find(p => p.name.toLowerCase() === name.toLowerCase());
+    if (!product) throw new NotFoundException(`Producto con nombre "${name}" no encontrado`);
     return product;
   }
 
@@ -59,31 +60,32 @@ onModuleInit() {
     return this.products;
   }
 
-  // 🍽️ Combos
-  createCombo(dto: CreateComboDto): ICombo {
+  // 🍽️ Combos por número
+  createCombo(dto: { name: string; items: string[] }): ICombo {
     const id = this.combos.length + 1;
-    const items = dto.items.map(id => this.findProduct(id));
+    const items = dto.items.map(name => this.findProductByName(name));
     const combo: ICombo = { id, name: dto.name, items };
     this.combos.push(combo);
     return combo;
   }
 
-  updateCombo(id: number, dto: Partial<CreateComboDto>): ICombo {
-    const combo = this.findCombo(id);
+  updateComboByNumber(number: number, dto: Partial<{ name: string; items: string[] }>): ICombo {
+    const combo = this.findComboByNumber(number);
     if (dto.name) combo.name = dto.name;
-    if (dto.items) combo.items = dto.items.map(id => this.findProduct(id));
+    if (dto.items) combo.items = dto.items.map(name => this.findProductByName(name));
     return combo;
   }
 
-  removeCombo(id: number): { deleted: boolean } {
-    const combo = this.findCombo(id);
+  removeComboByNumber(number: number): { deleted: boolean } {
+    const combo = this.findComboByNumber(number);
     this.combos.splice(this.combos.indexOf(combo), 1);
     return { deleted: true };
   }
 
-  findCombo(id: number): ICombo {
-    const combo = this.combos.find(c => c.id === id);
-    if (!combo) throw new NotFoundException(`Combo con id ${id} no encontrado`);
+  findComboByNumber(number: number): ICombo {
+    const name = `Desayuno ${number}`;
+    const combo = this.combos.find(c => c.name.toLowerCase() === name.toLowerCase());
+    if (!combo) throw new NotFoundException(`Combo número ${number} no encontrado`);
     return combo;
   }
 

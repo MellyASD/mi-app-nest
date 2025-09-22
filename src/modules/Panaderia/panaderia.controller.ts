@@ -1,22 +1,21 @@
-import {Controller,Get,Post,Patch,Delete,Param,Body,ParseIntPipe,} from '@nestjs/common';
+import {Controller,Get,Post,Patch,Delete,Param,Body,} from '@nestjs/common';
 import { PanaderiaService } from './panaderia.service';
 import { CreateProductDto } from './dto/create-product.dto';
-import { CreateComboDto } from './dto/create-combo.dto';
 
 @Controller('panaderia')
 export class PanaderiaController {
   constructor(private readonly panaderiaService: PanaderiaService) {}
 
-  // 🥐 Productos
+  // 🥐 Productos por nombre
 
   @Get('products')
   listProducts() {
     return this.panaderiaService.listProducts();
   }
 
-  @Get('products/:id')
-  getProduct(@Param('id', ParseIntPipe) id: number) {
-    return this.panaderiaService.findProduct(id);
+  @Get('products/:name')
+  getProductByName(@Param('name') name: string) {
+    return this.panaderiaService.findProductByName(name);
   }
 
   @Post('products')
@@ -24,46 +23,47 @@ export class PanaderiaController {
     return this.panaderiaService.createProduct(dto);
   }
 
-  @Patch('products/:id')
-  updateProduct(
-    @Param('id', ParseIntPipe) id: number,
+  @Patch('products/:name')
+  updateProductByName(
+    @Param('name') name: string,
     @Body() dto: Partial<CreateProductDto>,
   ) {
-    return this.panaderiaService.updateProduct(id, dto);
+    return this.panaderiaService.updateProductByName(name, dto);
   }
 
-  @Delete('products/:id')
-  removeProduct(@Param('id', ParseIntPipe) id: number) {
-    return this.panaderiaService.removeProduct(id);
+  @Delete('products/:name')
+  removeProductByName(@Param('name') name: string) {
+    return this.panaderiaService.removeProductByName(name);
   }
 
-  // 🍽️ Combos
+  // 🍽️ Combos por número
 
   @Get('combos')
   listCombos() {
     return this.panaderiaService.listCombos();
   }
 
-  @Get('combos/:id')
-  getCombo(@Param('id', ParseIntPipe) id: number) {
-    return this.panaderiaService.findCombo(id);
+  @Get('combos/:number')
+  getComboByNumber(@Param('number') number: number) {
+    return this.panaderiaService.findComboByNumber(number);
   }
 
   @Post('combos')
-  createCombo(@Body() dto: CreateComboDto) {
+  createCombo(@Body() dto: { name: string; items: string[] }) {
     return this.panaderiaService.createCombo(dto);
   }
 
-  @Patch('combos/:id')
-  updateCombo(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: Partial<CreateComboDto>,
+  @Patch('combos/:number')
+  updateComboByNumber(
+    @Param('number') number: number,
+    @Body() dto: Partial<{ name: string; items: string[] }>,
   ) {
-    return this.panaderiaService.updateCombo(id, dto);
+    return this.panaderiaService.updateComboByNumber(number, dto);
   }
 
-  @Delete('combos/:id')
-  removeCombo(@Param('id', ParseIntPipe) id: number) {
-    return this.panaderiaService.removeCombo(id);
+  @Delete('combos/:number')
+  removeComboByNumber(@Param('number') number: number) {
+    return this.panaderiaService.removeComboByNumber(number);
   }
 }
+
