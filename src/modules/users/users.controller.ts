@@ -1,31 +1,37 @@
-import { Controller, Get, Param, Post, Body, Put, Delete } from '@nestjs/common'; // Import the necessary decorators from NestJS
-import { IUser, UsersService } from './users.service'; // Importa el servicio UsersService
+import {Controller,Get,Post,Patch,Delete,Param,Body,ParseIntPipe} from '@nestjs/common';
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
-@Controller('users')// Define the controller with the base route 'users'
-export class UsersController {// Define the UsersController class
-    constructor (private readonly usersService: UsersService) {}// Inject the UsersService via the constructor
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
 
-    @Get()// Define the handler for the GET /users route
-    findAll() {// MMethod to get all users
-        return this.usersService.findAll();// Call the findAll method from the UsersService
-    }
-    @Get(':id') // Define the handler for the GET /users/:id route
-    findOne(@Param('id') id: string) {// MMethod to get a user by their ID
-        return this.usersService.findOne(Number(id));// Call the findOne method from the UsersService
-    }
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
+  }
 
-    @Post() // Define the handler for the POST /users route
-    create(@Body() body: Omit<IUser, 'id'>) {// MMethod to create a new user
-        return this.usersService.create(body);// Call the create method from the UsersService
-    }
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findOne(id);
+  }
 
-    @Put(':id') // Define the handler for the PUT /users/:id route  
-    update(@Param('id') id: string, @Body() body: Omit<IUser, 'id'>) {// Method to update an existing user
-        return this.usersService.update(Number(id), body);
-    } // Call the update method from the UsersService
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
+  }
 
-    @Delete(':id') // Define the handler for the DELETE /users/:id route
-    remove(@Param('id') id: string) {
-        return this.usersService.remove(Number(id));
-    }
+  @Patch(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto
+  ) {
+    return this.usersService.update(id, updateUserDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.remove(id);
+  }
 }
