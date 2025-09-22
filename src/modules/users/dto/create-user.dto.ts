@@ -9,7 +9,7 @@ export class CreateUserDto { // Clase para crear un nuevo usuario
   @IsEmail()
   email: string;
 
-  @IsInt()
-  @Min(19, { message: 'La edad debe ser mayor de 18 años' })
+  @IsInt() // Asegura que el campo sea un número entero
+  @Min(18, { message: 'La edad debe ser mayor de 18 años' })// Asegura que la edad mínima sea 18
   age: number;
 }
