@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsString, IsNumber, Min } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, Min } from 'class-validator'; // Importa validadores
 
-export class CreateProductDto {
+export class CreateProductDto { // DTO para crear productos
   @IsNotEmpty()
   @IsString()
   name: string;
