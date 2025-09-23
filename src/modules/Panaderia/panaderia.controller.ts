@@ -1,6 +1,10 @@
 import {Controller,Get,Post,Patch,Delete,Param,Body,} from '@nestjs/common';
 import { PanaderiaService } from './panaderia.service';
 import { CreateProductDto } from './dto/create-product.dto';
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Panaderia')
+@Controller('panaderia')
 
 @Controller('panaderia') // Ruta base del controlador
 export class PanaderiaController {

@@ -5,8 +5,10 @@ import { CreateItemDto } from './dto/create-item.dto'; // Import DTO for creatin
 import { UpdateItemDto } from './dto/update-item.dto'; // Import DTO for updating items
 import { IItem } from './item.model'; // Import the IItem interface
 import type { ICharacter } from './item.model'; // Import the ICharacter type
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('chest') // Define the controller with the 'chest' route
+@ApiTags('chest')
+@Controller('chest')
 export class ChestController {
   constructor(private readonly chestService: ChestService) {}
 
