@@ -63,8 +63,19 @@ export class ChestService {
     const red = this.chest.find(i => i.name === 'Hierba Roja' && i.quantity > 0); // Find red herb with quantity > 0
 
     if (green && red) { // If both herbs are available
-      green.quantity--;
-      red.quantity--;
+      green.quantity--; // Decrease quantity of green herb
+      red.quantity--;// Decrease quantity of red herb
+
+      if (green.quantity === 0) {
+        this.chest.splice(this.chest.indexOf(green), 1); // Remove green herb if quantity is 0
+      }
+      if (red.quantity === 0) {
+        this.chest.splice(this.chest.indexOf(red), 1); // Remove red herb if quantity is 0
+      }
+
+      if (this.chest.length >= this.maxSlots) {
+        throw new Error('El baúl está lleno, no se puede agregar la hierba mixta');
+      }
 
       const mixed: IItem = { // Create the mixed herb item
         id: this.chest.length > 0 ? this.chest[this.chest.length - 1].id + 1 : 1,
