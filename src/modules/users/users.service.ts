@@ -1,5 +1,5 @@
 export type IUser = {
-    password: any; id: number, name: string, email: string, age: number 
+    password?: any; id: number, name: string, email: string, age: number 
 };
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';

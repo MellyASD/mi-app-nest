@@ -11,16 +11,17 @@ import { PanaderiaModule } from './modules/Panaderia/panaderia.module';
 import { PanaderiaController } from './modules/Panaderia/panaderia.controller';
 import { PanaderiaService } from './modules/Panaderia/panaderia.service';
 import { AuthService } from './modules/auth/auth.service';
-import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
+import { UsersController } from './modules/users/users.controller';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule, PanaderiaModule, ChestModule, UsersModule, AuthModule],
-      inject: [ConfigService, PanaderiaService, ChestService, UsersService, AuthService],
+      imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
         host: config.get<string>('DB_HOST'),
@@ -33,9 +34,9 @@ import { AuthModule } from './modules/auth/auth.module';
       }),
     }),
     UsersModule, 
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, UsersService, ChestService, PanaderiaService, AuthService],
+  providers: [AppService ],
 })
 export class AppModule { }
