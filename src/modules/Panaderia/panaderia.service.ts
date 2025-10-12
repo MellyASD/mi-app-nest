@@ -9,6 +9,7 @@ import { Product } from '@entities/product.entity';
 import { Combo } from '@entities/combo.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreateComboDto } from './dto/create-combo.dto';
+import { ComboResponseDto } from './dto/combo-response.dto';
 
 @Injectable()
 export class PanaderiaService {
@@ -61,14 +62,17 @@ export class PanaderiaService {
     return this.comboRepo.save(combo);
   }
 
-  async listCombos(): Promise<Combo[]> {
-    const combos = await this.comboRepo.find({ relations: ['products'] });
+ async listCombos(): Promise<ComboResponseDto[]> {
+  const combos = await this.comboRepo.find({ relations: ['products'] });
 
-    return combos.map(combo => ({
-      ...combo,
-      price: combo.products.reduce((sum, item) => sum + Number(item.price), 0),
-    }));
-  }
+  return combos.map(combo => ({
+    id: combo.id,
+    name: combo.name,
+    products: combo.products,
+    price: combo.products.reduce((sum, item) => sum + Number(item.price), 0), // siempre devuelve number
+  }));
+}
+
 
   async findComboByName(name: string): Promise<Combo> {
     const combo = await this.comboRepo.findOne({ where: { name }, relations: ['products'] });

@@ -28,7 +28,7 @@ import { PanaderiaModule } from './modules/Panaderia/panaderia.module';
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: false, // usa migraciones en producción
+        synchronize: true, // usa migraciones en producción
       }),
     }),
 

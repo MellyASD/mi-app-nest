@@ -19,5 +19,5 @@ export class Combo {
   products!: Product[];
 
   @ApiProperty({ description: 'Precio del combo' })
-  price?: number;
+  price!: number;
 }
