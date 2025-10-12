@@ -1,94 +1,74 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { IItem, ICharacter } from './item.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, MoreThan } from 'typeorm';
+import { Item } from '@entities/item.entity';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 
-//* Service to manage chest items including CRUD operations and herb combination logic */ 
 @Injectable()
 export class ChestService {
-  private maxSlots = 10; 
+  private maxSlots = 10;
 
-  private chest: IItem[] = [ 
-    { id: 1, name: 'Magnum', type: 'weapon', quantity: 1, restrictedTo: 'Leon' },
-    { id: 2, name: 'Hierba Verde', type: 'healing', quantity: 3 },
-    { id: 3, name: 'Hierba Roja', type: 'healing', quantity: 2 },
-    { id: 4, name: 'Hierba Azul', type: 'healing', quantity: 1 },
-    { id: 5, name: 'Granada', type: 'explosive', quantity: 5, restrictedTo: 'Claire' }
-  ];
+  constructor(
+    @InjectRepository(Item)
+    private readonly itemRepo: Repository<Item>,
+  ) {}
 
-  findAll(character: ICharacter): IItem[] { // Filter items based on character restrictions
-    return this.chest.filter(item => !item.restrictedTo || item.restrictedTo === character); // Return items that are either unrestricted or restricted to the specified character
+  async findAll(character: 'Leon' | 'Claire'): Promise<Item[]> {
+    return this.itemRepo.find({
+      where: [
+        { restrictedTo: undefined },
+        { restrictedTo: character },
+      ],
+    });
   }
 
-  findOne(id: number): IItem { // Find an item by its ID
-    const item = this.chest.find(i => i.id === id); // Search for the item in the chest
-    if (!item) throw new NotFoundException(`Item con id ${id} no encontrado`); // Throw an error if the item is not found
+  async findOne(id: number): Promise<Item> {
+    const item = await this.itemRepo.findOneBy({ id });
+    if (!item) throw new NotFoundException(`Item con id ${id} no encontrado`);
     return item;
   }
 
-  create(createItemDto: CreateItemDto): IItem { // Create a new item in the chest
-    if (this.chest.length >= this.maxSlots) {
-      throw new Error('El baúl está lleno');
-    }
+  async create(createItemDto: CreateItemDto): Promise<Item> {
+    const count = await this.itemRepo.count();
+    if (count >= this.maxSlots) throw new Error('El baúl está lleno');
 
-    const newId = this.chest.length > 0
-      ? this.chest[this.chest.length - 1].id + 1
-      : 1;
-
-    const newItem: IItem = {
-      id: newId,
-      name: createItemDto.name,
-      type: createItemDto.type as IItem['type'],
-      quantity: createItemDto.quantity,
-      restrictedTo: createItemDto.restrictedTo
-    };
-
-    this.chest.push(newItem);
-    return newItem;
+    const newItem = this.itemRepo.create(createItemDto);
+    return this.itemRepo.save(newItem);
   }
 
-  update(id: number, updateItemDto: UpdateItemDto): IItem {
-    const item = this.findOne(id);
-    Object.assign(item, updateItemDto);
-    return item;
+  async update(id: number, updateItemDto: UpdateItemDto): Promise<Item> {
+    const item = await this.findOne(id);
+    const updated = Object.assign(item, updateItemDto);
+    return this.itemRepo.save(updated);
   }
 
-  remove(id: number): { deleted: boolean } {
-    const item = this.findOne(id);
-    this.chest.splice(this.chest.indexOf(item), 1);
+  async remove(id: number): Promise<{ deleted: boolean }> {
+    const item = await this.findOne(id);
+    await this.itemRepo.remove(item);
     return { deleted: true };
   }
 
-  combineHerbs(): IItem { // Combine green and red herbs to create a mixed herb
-    const green = this.chest.find(i => i.name === 'Hierba Verde' && i.quantity > 0); // Find green herb with quantity > 0
-    const red = this.chest.find(i => i.name === 'Hierba Roja' && i.quantity > 0); // Find red herb with quantity > 0
+  async combineHerbs(): Promise<Item> {
+    const green = await this.itemRepo.findOne({ where: { name: 'Hierba Verde', quantity: MoreThan(0) } });
+    const red = await this.itemRepo.findOne({ where: { name: 'Hierba Roja', quantity: MoreThan(0) } });
 
-    if (green && red) { // If both herbs are available
-      green.quantity--; // Decrease quantity of green herb
-      red.quantity--;// Decrease quantity of red herb
+    if (!green || !red) throw new Error('No hay suficientes hierbas para combinar');
 
-      if (green.quantity === 0) {
-        this.chest.splice(this.chest.indexOf(green), 1); // Remove green herb if quantity is 0
-      }
-      if (red.quantity === 0) {
-        this.chest.splice(this.chest.indexOf(red), 1); // Remove red herb if quantity is 0
-      }
+    green.quantity--;
+    red.quantity--;
 
-      if (this.chest.length >= this.maxSlots) {
-        throw new Error('El baúl está lleno, no se puede agregar la hierba mixta');
-      }
+    await this.itemRepo.save([green, red]);
 
-      const mixed: IItem = { // Create the mixed herb item
-        id: this.chest.length > 0 ? this.chest[this.chest.length - 1].id + 1 : 1,
-        name: 'Hierba Mixta (Verde + Roja)',
-        type: 'healing',
-        quantity: 1
-      };
+    const count = await this.itemRepo.count();
+    if (count >= this.maxSlots) throw new Error('El baúl está lleno, no se puede agregar la hierba mixta');
 
-      this.chest.push(mixed);
-      return mixed;
-    }
+    const mixed = this.itemRepo.create({
+      name: 'Hierba Mixta (Verde + Roja)',
+      type: 'healing',
+      quantity: 1,
+    });
 
-    throw new Error('No hay suficientes hierbas para combinar');
+    return this.itemRepo.save(mixed);
   }
 }

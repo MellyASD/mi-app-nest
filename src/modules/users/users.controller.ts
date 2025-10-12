@@ -1,39 +1,40 @@
-import {Controller,Get,Post,Patch,Delete,Param,Body,ParseIntPipe} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
-//* Swagger tag for grouping endpoints in the documentation and controller definition
-@ApiTags('users')
+import { CreateUserDTO } from 'src/dto/create-user.dto';
+import { UpdateUserDTO } from 'src/dto/update-user.dto';
+
 @Controller('users')
+
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+    constructor(private readonly usersService: UsersService) { }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
+    @Get()
+    
+    findAll() {
+        return this.usersService.findAll();
+    }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
-  }
+    @Get(':id')
+   
+    findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.usersService.findOne(id)
+    }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
+    @Post()
 
-  @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto
-  ) {
-    return this.usersService.update(id, updateUserDto);
-  }
+    create(@Body() body: CreateUserDTO) {
+        return this.usersService.create(body);
+    }
 
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.remove(id);
-  }
+    @Put(':id')
+    
+    update(@Param('id',ParseIntPipe) id: number, @Body() body: UpdateUserDTO) {
+        return this.usersService.update(id, body)
+    }
+
+    @Delete(':id')
+  
+    remove(@Param('id', ParseIntPipe) id: number) {
+        return this.usersService.remove(id)
+    }
 }

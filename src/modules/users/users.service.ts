@@ -1,52 +1,49 @@
-export type IUser = {
-    password?: any; id: number, name: string, email: string, age: number 
-};
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-
-//* Service to manage users in memory */
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDTO } from 'src/dto/create-user.dto';
+import { UpdateUserDTO } from 'src/dto/update-user.dto';
+import { User } from 'src/entities/user.entity';
+import * as bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  private users: IUser[] = [
-    { id: 1, name: 'paolar', email: 'paolar@correo.com', age: 28 },
-    { id: 2, name: 'homero simpson', email: 'homerojs@gmail.com', age: 39 },
-    { id: 3, name: 'andres', email: 'andres@hotmail.com', age: 25 }
-  ];
 
-  findAll(): IUser[] {
-    return this.users;
-  }
+    constructor(
+        @InjectRepository(User)
+        private usersRepo: Repository<User>
+    ) { }
 
-  findOne(id: number): IUser {
-    const userFind = this.users.find((user) => user.id === id);
-    if (!userFind) throw new NotFoundException(`User with id ${id} not found`);
-    return userFind;
-  }
-
-  create(user: CreateUserDto): IUser {
-    const newId = this.users.length > 0
-      ? this.users[this.users.length - 1].id + 1
-      : 1;
-
-    const newUser: IUser = { id: newId, ...user };
-    this.users.push(newUser);
-    return newUser;
-  }
-
-  update(id: number, newUser: UpdateUserDto): IUser {
-    const user = this.findOne(id);
-    Object.assign(user, newUser);
-    return user;
-  }
-
-  remove(id: number): { deleted: boolean } {
-    const user = this.users.find(user => user.id === id);
-    if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
+    findAll() {
+        return this.usersRepo.find();
     }
-    this.users.splice(this.users.indexOf(user), 1);
-    return { deleted: true };
-  }
+
+    /**
+     * findOne: Method to find unique register to user repository
+     * @typeParam id - { String } - Id for recognize user
+     * @returns IUser - Unique register
+     */
+
+    async findOne(id: number) {
+        const userFind = await this.usersRepo.findOne({ where: { id } })
+        if (!userFind) throw new NotFoundException('Usuario no encontrado')
+        return userFind
+    }
+
+    create(newUser: CreateUserDTO) {
+        const userCreated = this.usersRepo.create(newUser);
+        return this.usersRepo.save(userCreated);
+    }
+
+    async update(id: number, updateUser: UpdateUserDTO) {
+        const hashedPassword = await bcrypt.hash(updateUser.password, 10)
+        await this.usersRepo.update(id, {...updateUser, password: hashedPassword});
+        return this.findOne(id);
+    }
+
+    async remove(id: number) {
+        const result = await this.usersRepo.delete(id)
+        if (result.affected === 0) throw new NotFoundException(`Usuario con id ${id} no encontrado`)
+        return { message: `El usuario con id ${id} fue eliminado correctamente` }
+    }
 }
