@@ -8,7 +8,7 @@ export class PanaderiaService implements OnModuleInit {// Implementa OnModuleIni
   private products: IProduct[] = []; // Almacena productos
   private combos: ICombo[] = []; // Almacena combos
 
-  // 🔄 Precarga inicial
+  // ** Precarga algunos productos y combos al iniciar el módulo (Memoria) ** //
   onModuleInit() {//
     this.createProduct({ name: 'Jugo de naranja', price: 3000 }); 
     this.createProduct({ name: 'Huevos al gusto', price: 4000 });
@@ -25,7 +25,7 @@ export class PanaderiaService implements OnModuleInit {// Implementa OnModuleIni
     this.createCombo({ name: 'Desayuno 4', items: ['Tamal', 'Chocolate', 'Pan'] });
   }
 
-  // 🥐 Productos por nombre
+  // Productos por nombre
   createProduct(dto: CreateProductDto): IProduct { 
     const id = this.products.length + 1;// Genera un ID simple
     const { name, price } = dto;
@@ -56,7 +56,7 @@ export class PanaderiaService implements OnModuleInit {// Implementa OnModuleIni
     return this.products;
   }
 
-  // 🍽️ Combos por número
+  // Combos por número
   createCombo(dto: { name: string; items: string[] }): ICombo { // Crea un combo
     const id = this.combos.length + 1; // Genera un ID simple
     const items = dto.items.map(name => this.findProductByName(name)); // Mapea nombres a productos

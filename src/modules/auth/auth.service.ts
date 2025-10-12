@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { LoginDTO } from 'src/dto/login.dto';
-
+//* Service to handle authentication logic, including user login and token generation */
 @Injectable()
 export class AuthService {
     constructor(private readonly usersService: UsersService) {}

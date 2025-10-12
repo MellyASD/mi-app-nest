@@ -1,8 +1,10 @@
 export type ICharacter = 'Leon' | 'Claire'; // Define the character types
-export interface IItem { // Define the IItem interface
-  id: number; // Unique identifier for the item
+
+//* Define the IItem interface and its properties and character restrictions
+export interface IItem { 
+  id: number;  
   name: string;
   type: 'weapon' | 'healing' | 'key' | 'explosive';
   quantity: number;
-  restrictedTo?: ICharacter; // Optional property to restrict the item to a specific character
+  restrictedTo?: ICharacter; 
 }

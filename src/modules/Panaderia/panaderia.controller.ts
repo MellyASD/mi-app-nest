@@ -2,7 +2,7 @@ import {Controller,Get,Post,Patch,Delete,Param,Body,} from '@nestjs/common';
 import { PanaderiaService } from './panaderia.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ApiTags } from '@nestjs/swagger';
-
+ //* Swagger tag for grouping endpoints in the documentation */ and controller definition
 @ApiTags('Panaderia')
 @Controller('panaderia')
 
@@ -10,24 +10,24 @@ import { ApiTags } from '@nestjs/swagger';
 export class PanaderiaController {
   constructor(private readonly panaderiaService: PanaderiaService) {} // Inyecta el servicio
 
-  // 🥐 Productos por nombre
+  // Productos por nombre and combos por número
 
-  @Get('products') // Lista todos los productos
+  @Get('products') 
   listProducts() {
     return this.panaderiaService.listProducts();
   }
 
-  @Get('products/:name') // Obtiene un producto por nombre
+  @Get('products/:name') 
   getProductByName(@Param('name') name: string) {
     return this.panaderiaService.findProductByName(name);
   }
 
-  @Post('products') // Crea un producto
+  @Post('products') 
   createProduct(@Body() dto: CreateProductDto) {
     return this.panaderiaService.createProduct(dto);
   }
 
-  @Patch('products/:name')// Actualiza un producto por nombre
+  @Patch('products/:name')
   updateProductByName(
     @Param('name') name: string,
     @Body() dto: Partial<CreateProductDto>,
@@ -35,34 +35,34 @@ export class PanaderiaController {
     return this.panaderiaService.updateProductByName(name, dto);
   }
 
-  @Delete('products/:name') // Elimina un producto por nombre
+  @Delete('products/:name') 
   removeProductByName(@Param('name') name: string) {
     return this.panaderiaService.removeProductByName(name);
   }
 
-  // 🍽️ Combos por número
+  //  Combos por número
 
-  @Get('combos') // Lista todos los combos
+  @Get('combos') 
   listCombos() {
     return this.panaderiaService.listCombos();
   }
 
-  @Get('combos/:number') // Número es un entero
-  getComboByNumber(@Param('number') number: number) { // Nuevo endpoint
+  @Get('combos/:number') 
+  getComboByNumber(@Param('number') number: number) { 
     return this.panaderiaService.findComboByNumber(number);
   }
-
-  @Get('combos/:number/total') // Nuevo endpoint para precio total
+//* Nuevo endpoint para precio total
+  @Get('combos/:number/total') 
   getComboWithTotal(@Param('number') number: number) {
     return this.panaderiaService.getComboWithTotalPrice(number);
 }
 
-  @Post('combos') // Crea un combo
+  @Post('combos') 
   createCombo(@Body() dto: { name: string; items: string[] }) {
     return this.panaderiaService.createCombo(dto);
   }
 
-  @Patch('combos/:number') // Actualiza un combo
+  @Patch('combos/:number') 
   updateComboByNumber(
     @Param('number') number: number,
     @Body() dto: Partial<{ name: string; items: string[] }>,
@@ -70,7 +70,7 @@ export class PanaderiaController {
     return this.panaderiaService.updateComboByNumber(number, dto);
   }
 
-  @Delete('combos/:number') // Elimina un combo
+  @Delete('combos/:number') 
   removeComboByNumber(@Param('number') number: number) {
     return this.panaderiaService.removeComboByNumber(number);
   }

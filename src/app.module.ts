@@ -1,24 +1,22 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './modules/users/users.module';
-import { UsersService } from './modules/users/users.service';
-import { ChestModule } from './modules/chest-re2/chest.module';
-import { ChestController } from './modules/chest-re2/chest.controller';
-import { ChestService } from './modules/chest-re2/chest.service';
-import { PanaderiaModule } from './modules/Panaderia/panaderia.module';
-import { PanaderiaController } from './modules/Panaderia/panaderia.controller';
-import { PanaderiaService } from './modules/Panaderia/panaderia.service';
-import { AuthService } from './modules/auth/auth.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './modules/auth/auth.module';
-import { UsersController } from './modules/users/users.controller';
 
+// Primary application module and configuration
+import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ChestModule } from './modules/chest-re2/chest.module';
+import { PanaderiaModule } from './modules/Panaderia/panaderia.module';
 
 @Module({
   imports: [
+    //  Configuración global con variables de entorno
     ConfigModule.forRoot({ isGlobal: true }),
+
+    //  Conexión a MySQL con TypeORM
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -30,13 +28,17 @@ import { UsersController } from './modules/users/users.controller';
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
         autoLoadEntities: true,
-        synchronize: false,
+        synchronize: false, // usa migraciones en producción
       }),
     }),
-    UsersModule, 
+
+    //  Módulos funcionales
+    UsersModule,
     AuthModule,
+    ChestModule,
+    PanaderiaModule,
   ],
   controllers: [AppController],
-  providers: [AppService ],
+  providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

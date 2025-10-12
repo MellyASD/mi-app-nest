@@ -1,34 +1,36 @@
 import {Controller,Get,Post,Patch,Delete,Param,Body,ParseIntPipe
-} from '@nestjs/common'; // Import necessary decorators and pipes from NestJS
-import { ChestService } from './chest.service'; // Import the ChestService to handle business logic
-import { CreateItemDto } from './dto/create-item.dto'; // Import DTO for creating items
-import { UpdateItemDto } from './dto/update-item.dto'; // Import DTO for updating items
-import { IItem } from './item.model'; // Import the IItem interface
-import type { ICharacter } from './item.model'; // Import the ICharacter type
+} from '@nestjs/common'; 
+import { ChestService } from './chest.service'; 
+import { CreateItemDto } from './dto/create-item.dto'; 
+import { UpdateItemDto } from './dto/update-item.dto'; 
+import { IItem } from './item.model'; 
+import type { ICharacter } from './item.model'; 
 import { ApiTags } from '@nestjs/swagger';
 
+//* Swagger tag for grouping endpoints in the documentation and controller definition
 @ApiTags('chest')
 @Controller('chest')
 export class ChestController {
   constructor(private readonly chestService: ChestService) {}
 
-  @Get(':character') // Define a GET endpoint that takes a character parameter
+  //* Endpoint to retrieve all items for a specific character
+  @Get(':character') 
   findAll(@Param('character') character: ICharacter) {
     return this.chestService.findAll(character);
   }
-
-  @Post() // Define a POST endpoint to create a new item
+//* Endpoint to create a new item
+  @Post() 
   create(@Body() createItemDto: CreateItemDto) {
     return this.chestService.create(createItemDto);
   }
-
-  @Post('combine-herbs')
-  combine() {
-    return this.chestService.combineHerbs();
+//* Endpoint to update an existing item by its ID and the updated data
+  @Patch(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateItemDto: UpdateItemDto) {
+    return this.chestService.update(id, updateItemDto);
   }
-
+//* Endpoint to delete an item by its ID ensureing the ID is an integer
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) { // Use ParseIntPipe to ensure id is a number
+  remove(@Param('id', ParseIntPipe) id: number) { 
     return this.chestService.remove(id);
   }
 }

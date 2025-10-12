@@ -3,11 +3,12 @@ import { IItem, ICharacter } from './item.model';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 
+//* Service to manage chest items including CRUD operations and herb combination logic */ 
 @Injectable()
 export class ChestService {
-  private maxSlots = 10; // Maximum number of item slots in the chest
+  private maxSlots = 10; 
 
-  private chest: IItem[] = [ // Sample items in the chest
+  private chest: IItem[] = [ 
     { id: 1, name: 'Magnum', type: 'weapon', quantity: 1, restrictedTo: 'Leon' },
     { id: 2, name: 'Hierba Verde', type: 'healing', quantity: 3 },
     { id: 3, name: 'Hierba Roja', type: 'healing', quantity: 2 },

@@ -1,19 +1,19 @@
 import { IsEmail, IsNotEmpty, IsString, IsInt, Min, MinLength, MaxLength, Matches } from 'class-validator'; // Importa los validadores necesarios
 
-// Define la clase CreateUserDto con reglas de validación
-export class CreateUserDto { // Clase para crear un nuevo usuario
+// Define the CreateUserDto class with validation decorators
+export class CreateUserDto { 
   @IsNotEmpty()
   @IsString()
   name: string;
 
   @IsEmail()
   email: string;
-
-  @IsInt() // Asegura que el campo sea un número entero
+//* Optional age field with validation */
+  @IsInt() 
   @Min(0, { message: 'La edad no puede ser negativa' })
-  @Min(18, { message: 'La edad debe ser mayor de 18 años' })// Asegura que la edad mínima sea 18
+  @Min(18, { message: 'La edad debe ser mayor de 18 años' })
   age: number;
-
+//* Password field with complex validation rules */
   @IsNotEmpty()
   @IsString()
   //@MinLength(6, { message: 'La contraseña debe tener al menos 6 caracteres' }) // Asegura que la contraseña tenga al menos 6 caracteres
