@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class SeedPanaderiaData1697220000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Limpieza previa (opcional pero útil en desarrollo)
+    // Limpieza previa 
     await queryRunner.query(`DELETE FROM combo_products_product`);
     await queryRunner.query(`DELETE FROM combo`);
     await queryRunner.query(`DELETE FROM product`);

@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class CreateRoleItemsJoinTable1760401104770 implements MigrationInterface {
     name = 'CreateRoleItemsJoinTable1760401104770'
-
+//* Migration to create a join table for many-to-many relationship between roles and items */
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE \`role_items_item\` (\`roleId\` int NOT NULL, \`itemId\` int NOT NULL, INDEX \`IDX_4678278d8f4c8561eee8642919\` (\`roleId\`), INDEX \`IDX_7eb1f2cf56f4630343bfb3ac33\` (\`itemId\`), PRIMARY KEY (\`roleId\`, \`itemId\`)) ENGINE=InnoDB`);
         await queryRunner.query(`ALTER TABLE \`user\` CHANGE \`age\` \`age\` int NULL`);

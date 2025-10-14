@@ -14,7 +14,7 @@ import { ComboResponseDto } from './dto/combo-response.dto';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { Product } from '@entities/product.entity';
 import { Combo } from '@entities/combo.entity';
-
+//* Controller for managing bakery products and combos */
 @ApiTags('Panadería')
 @Controller('panaderia')
 export class PanaderiaController {

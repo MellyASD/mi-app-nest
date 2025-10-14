@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-
+//* Entity representing a product in the bakery
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn()

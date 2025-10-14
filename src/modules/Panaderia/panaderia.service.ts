@@ -10,7 +10,7 @@ import { Combo } from '@entities/combo.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreateComboDto } from './dto/create-combo.dto';
 import { ComboResponseDto } from './dto/combo-response.dto';
-
+//* Service for managing bakery products and combos */
 @Injectable()
 export class PanaderiaService {
   constructor(
@@ -61,10 +61,10 @@ export class PanaderiaService {
     const combo = this.comboRepo.create({ name, products });
     return this.comboRepo.save(combo);
   }
-
+//* List all combos with their products and total price */
  async listCombos(): Promise<ComboResponseDto[]> {
   const combos = await this.comboRepo.find({ relations: ['products'] });
-
+//* Map combos to include total price calculation */
   return combos.map(combo => ({
     id: combo.id,
     name: combo.name,
@@ -73,7 +73,7 @@ export class PanaderiaService {
   }));
 }
 
-
+//* Find a combo by its name, including products and total price */
   async findComboByName(name: string): Promise<Combo> {
     const combo = await this.comboRepo.findOne({ where: { name }, relations: ['products'] });
     if (!combo) throw new NotFoundException(`Combo "${name}" no encontrado`);
@@ -81,7 +81,7 @@ export class PanaderiaService {
     combo.price = combo.products.reduce((sum, item) => sum + Number(item.price), 0);
     return combo;
   }
-
+//* Update an existing combo by its name */
   async updateComboByName(name: string, dto: Partial<CreateComboDto>): Promise<Combo> {
     const combo = await this.findComboByName(name);
 
@@ -95,7 +95,7 @@ export class PanaderiaService {
 
     return this.comboRepo.save(combo);
   }
-
+//* Remove a combo by its name */
   async removeComboByName(name: string): Promise<{ deleted: boolean }> {
     const combo = await this.findComboByName(name);
     await this.comboRepo.remove(combo);

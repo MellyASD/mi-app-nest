@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class AddRoleColumnToUser1760305202779 implements MigrationInterface {
     name = 'AddRoleColumnToUser1760305202779'
-
+//* Migration to add role column to user and create product, combo, and item tables with relationships */
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE \`product\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`price\` decimal(10,2) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`combo\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
@@ -13,7 +13,7 @@ export class AddRoleColumnToUser1760305202779 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE \`combo_items_product\` ADD CONSTRAINT \`FK_fe85a0a081e2f355a55f0d3c8fb\` FOREIGN KEY (\`comboId\`) REFERENCES \`combo\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE`);
         await queryRunner.query(`ALTER TABLE \`combo_items_product\` ADD CONSTRAINT \`FK_79ddc0ce99457c09b6bebffea19\` FOREIGN KEY (\`productId\`) REFERENCES \`product\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE`);
     }
-
+//* Revert the changes made in the up method */
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE \`combo_items_product\` DROP FOREIGN KEY \`FK_79ddc0ce99457c09b6bebffea19\``);
         await queryRunner.query(`ALTER TABLE \`combo_items_product\` DROP FOREIGN KEY \`FK_fe85a0a081e2f355a55f0d3c8fb\``);

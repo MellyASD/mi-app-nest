@@ -5,7 +5,7 @@ export class SeedBaulData1760401627915 implements MigrationInterface {
     await queryRunner.query(`
       INSERT INTO role (name) VALUES ('Claire'), ('Leon');
     `);
-
+//* Insertar items */
     await queryRunner.query(`
       INSERT INTO item (name, type, value, quantity, restrictedTo)
       VALUES 
@@ -15,7 +15,7 @@ export class SeedBaulData1760401627915 implements MigrationInterface {
         ('Llave', 'especial', 0, 1, 'Leon'),
         ('Munición', 'combate', 15, 10, 'Claire');
     `);
-
+//* Asociar items a roles */
     await queryRunner.query(`
       INSERT INTO role_items_item (roleId, itemId)
       VALUES
@@ -29,7 +29,7 @@ export class SeedBaulData1760401627915 implements MigrationInterface {
         ((SELECT id FROM role WHERE name = 'Leon'), (SELECT id FROM item WHERE name = 'Llave'));
     `);
   }
-
+//* Revert the changes made in the up method */
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DELETE FROM role_items_item`);
     await queryRunner.query(`DELETE FROM item`);

@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 't
 import { ApiProperty } from '@nestjs/swagger';
 import { Product } from './product.entity';
 
-
+//* Entity representing a combo of products in the bakery
 @Entity()
 export class Combo {
   @PrimaryGeneratedColumn()
@@ -12,7 +12,7 @@ export class Combo {
   @Column()
   @ApiProperty({ description: 'Nombre del combo' })
   name!: string;
-
+//* Many-to-many relationship with Product entity
   @ManyToMany(() => Product)
   @JoinTable()
   @ApiProperty({ description: 'Lista de productos incluidos en el combo' })

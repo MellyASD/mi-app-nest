@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
 import { Role } from './role.entity';
 import { ApiProperty } from '@nestjs/swagger';
-
+//* Entity representing an item in the chest
 @Entity()
 export class Item {
   @PrimaryGeneratedColumn()
@@ -21,7 +21,7 @@ export class Item {
 
   @Column({ nullable: true })
   restrictedTo!: string;
-
+//* Many-to-many relationship with Role entity */
 @ManyToMany(() => require('./role.entity').Role, role => role.items)
 @JoinTable()
 roles!: Role[];
