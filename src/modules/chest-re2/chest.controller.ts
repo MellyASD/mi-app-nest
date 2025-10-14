@@ -24,7 +24,11 @@ export class ChestController {
   async findAll(@Query('character') character: 'Leon' | 'Claire') {
     return this.chestService.findAll(character);
   }
-
+@Get('all')
+@ApiResponse({ status: 200, description: 'Lista completa de ítems en el baúl' })
+async findAllItems() {
+  return this.chestService.findAllItems();
+}
   @Get(':id')
   @ApiResponse({ status: 200, description: 'Ítem encontrado por ID' })
   async findOne(@Param('id') id: number) {

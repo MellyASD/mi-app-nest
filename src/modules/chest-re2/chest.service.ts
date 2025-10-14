@@ -7,6 +7,7 @@ import { UpdateItemDto } from './dto/update-item.dto';
 
 @Injectable()
 export class ChestService {
+
   private maxSlots = 10;
 
   constructor(
@@ -21,6 +22,10 @@ export class ChestService {
         { restrictedTo: character },
       ],
     });
+  }
+
+  async findAllItems() {
+    return this.itemRepo.find();
   }
 
   async findOne(id: number): Promise<Item> {

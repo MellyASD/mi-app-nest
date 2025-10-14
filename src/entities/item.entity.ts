@@ -1,27 +1,28 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Role } from './role.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Item {
   @PrimaryGeneratedColumn()
-  @ApiProperty()
   id!: number;
 
   @Column()
-  @ApiProperty()
   name!: string;
 
   @Column()
-  @ApiProperty()
   type!: string;
 
   @Column()
-  @ApiProperty()
   value!: number;
 
-  @ManyToMany(() => Role, role => role.items)
-  @ApiProperty({ type: () => [Role] })
-  @JoinTable()
-  roles!: Role[];
+  @Column({ nullable: true })
+  quantity!: number;
+
+  @Column({ nullable: true })
+  restrictedTo!: string;
+
+@ManyToMany(() => require('./role.entity').Role, role => role.items)
+@JoinTable()
+roles!: Role[];
 }

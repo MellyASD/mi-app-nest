@@ -1,9 +1,11 @@
 import * as dotenv from 'dotenv'
 import { DataSource } from 'typeorm'
 import { User } from './src/entities/user.entity'
-import { Item } from '@entities/item.entity';
-import { Combo } from '@entities/combo.entity';
+import { Item } from './src/entities/item.entity'
+import { Combo } from './src/entities/combo.entity'
+import { Role } from './src/entities/role.entity';
 import { Product } from './src/entities/product.entity';
+
 
 dotenv.config()
 
@@ -14,7 +16,7 @@ export default new DataSource({
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: [User, Product, Item, Combo],
+    entities: [User, Product, Item, Combo, Role],
     migrations: ['./src/migrations/*.ts'],
-    synchronize: true
+    synchronize: false
 });
