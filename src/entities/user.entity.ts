@@ -1,9 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn,  } from 'typeorm';
+
 //* Enum for user roles */
-export enum RolesEnum {
-  USER = 'USER',
-  ADMIN = 'ADMIN'
-}
+export type Roles = 'User' | 'Admin';
+//export enum RolesEnum {
+
+ // User = 'User',
+ // Admin = 'Admin'
+//}
 
 @Entity()
 export class User {
@@ -22,6 +25,6 @@ export class User {
   @Column({ nullable: true })
   age?: number;
 
-  @Column({ default: 'cliente' })
-  role!: string;
+  @Column({ default: 'user' })
+  role!: Roles;
 }
